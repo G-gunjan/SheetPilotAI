@@ -1,191 +1,3 @@
-# import streamlit as st
-# import pandas as pd
-
-# from utils.dataframe_utils import load_dataframe
-# from components.sidebar import render_sidebar
-# from components.dashboard import render_metrics
-# from components.command_panel import render_command_panel
-# from services.gemini_service import GeminiService
-# from services.code_executor import execute_code
-# from utils.visualisation import create_visualization
-
-# # ------------------------------------------------
-# # PAGE CONFIG
-# # ------------------------------------------------
-# st.set_page_config(
-#     page_title="SheetPilot AI – Voice Macro Builder",
-#     page_icon="📊",
-#     layout="wide"
-# )
-
-# # ------------------------------------------------
-# # SESSION STATE
-# # ------------------------------------------------
-# for key in ["history", "result", "generated_code", "ai_response", "command_input"]:
-#     if key not in st.session_state:
-#         st.session_state[key] = [] if key == "history" else None
-
-# # ------------------------------------------------
-# # HEADER
-# # ------------------------------------------------
-# st.title("📊 SheetPilot AI")
-# st.markdown("### Voice-Activated Excel Macro Builder for Tax Professionals")
-# st.markdown("**Upload → Speak / Type → Generate (Pandas or VBA) → Execute → Download**")
-
-# # ------------------------------------------------
-# # SIDEBAR
-# # ------------------------------------------------
-# show_code, show_ai = render_sidebar()
-
-# # ------------------------------------------------
-# # FILE UPLOAD
-# # ------------------------------------------------
-# uploaded_file = st.file_uploader(
-#     "Upload your CSV or Excel file",
-#     type=["csv", "xlsx", "xls"]
-# )
-
-# if uploaded_file is None:
-#     st.info("👆 Upload a dataset to start. Then speak or type your command.")
-#     st.stop()
-
-# # ------------------------------------------------
-# # LOAD DATA
-# # ------------------------------------------------
-# try:
-#     df = load_dataframe(uploaded_file)
-# except Exception as e:
-#     st.error(f"Unable to load file: {e}")
-#     st.stop()
-
-# st.session_state["df"] = df
-
-# # ------------------------------------------------
-# # DATASET OVERVIEW
-# # ------------------------------------------------
-# st.subheader("📈 Dataset Overview")
-# render_metrics(df)
-
-# with st.expander("🔎 Preview Dataset", expanded=False):
-#     st.dataframe(df.head(100), use_container_width=True)
-
-# # ------------------------------------------------
-# # COMMAND PANEL (VOICE + TEXT)
-# # ------------------------------------------------
-# command, submitted, prefer_vba = render_command_panel()
-
-# # ------------------------------------------------
-# # PROCESS COMMAND
-# # ------------------------------------------------
-# if submitted:
-#     if not command or not command.strip():
-#         st.warning("Please enter or speak a command.")
-#         st.stop()
-
-#     with st.spinner("🧠 SheetPilot is understanding your request..."):
-#         try:
-#             gemini = GeminiService()
-#             ai_response = gemini.generate_command(
-#                 command,
-#                 df,
-#                 prefer_vba=prefer_vba
-#             )
-#             st.session_state.ai_response = ai_response
-#             st.session_state.generated_code = ai_response.get("code")
-#         except Exception as e:
-#             st.error(f"Gemini error: {e}")
-#             st.stop()
-
-# # ------------------------------------------------
-# # AI PLAN
-# # ------------------------------------------------
-# if st.session_state.ai_response:
-#     response = st.session_state.ai_response
-
-#     st.subheader("🧠 AI Execution Plan")
-#     col1, col2 = st.columns(2)
-
-#     with col1:
-#         st.markdown(f"**Intent:** {response.get('intent', 'N/A')}")
-#         st.markdown(f"**Operation:** {response.get('operation', 'N/A')}")
-#         st.markdown(f"**Code Type:** `{response.get('code_type', 'pandas').upper()}`")
-
-#     with col2:
-#         if show_ai:
-#             st.info(response.get("explanation", "No explanation available."))
-
-# # ------------------------------------------------
-# # GENERATED CODE
-# # ------------------------------------------------
-# if show_code and st.session_state.generated_code:
-#     code_type = st.session_state.ai_response.get("code_type", "pandas")
-#     lang = "vb" if code_type == "vba" else "python"
-
-#     with st.expander(f"🐍 Generated {'VBA Macro' if code_type == 'vba' else 'Pandas'} Code", expanded=True):
-#         st.code(st.session_state.generated_code, language=lang)
-
-#         if code_type == "vba":
-#             st.success("Copy the VBA code above and paste it into the Excel VBA Editor (Alt+F11).")
-
-# # ------------------------------------------------
-# # EXECUTION (only for Pandas)
-# # ------------------------------------------------
-# if st.session_state.generated_code:
-#     code_type = st.session_state.ai_response.get("code_type", "pandas")
-
-#     if code_type == "pandas":
-#         if st.button("▶️ Execute Generated Code", type="primary"):
-#             try:
-#                 with st.spinner("Executing operation..."):
-#                     result = execute_code(
-#                         st.session_state.generated_code,
-#                         df
-#                     )
-#                     st.session_state.result = result
-#                     st.session_state.history.append({
-#                         "command": command,
-#                         "status": "Success"
-#                     })
-#             except Exception as e:
-#                 st.error(f"Execution failed: {e}")
-#     else:
-#         st.info("VBA macros cannot be executed inside the browser. Copy the code into Excel.")
-
-# # ------------------------------------------------
-# # RESULTS
-# # ------------------------------------------------
-# if st.session_state.result is not None:
-#     result = st.session_state.result
-#     st.subheader("📊 Execution Result")
-
-#     if isinstance(result, pd.DataFrame):
-#         st.dataframe(result, use_container_width=True)
-
-#         csv = result.to_csv(index=False)
-#         st.download_button(
-#             "📥 Download Result as CSV",
-#             csv,
-#             "sheetpilot_result.csv",
-#             "text/csv"
-#         )
-
-#         # Optional chart
-#         chart_type = st.session_state.ai_response.get("chart_type")
-#         fig = create_visualization(result, chart_type)
-#         if fig:
-#             st.plotly_chart(fig, use_container_width=True)
-#     else:
-#         st.write(result)
-
-# # ------------------------------------------------
-# # HISTORY
-# # ------------------------------------------------
-# if st.session_state.history:
-#     with st.expander("🕘 Command History"):
-#         for item in reversed(st.session_state.history):
-#             st.write(f"🎤 {item['command']} — ✅ {item['status']}")
-
-
 import streamlit as st
 import pandas as pd
 
@@ -214,15 +26,26 @@ st.set_page_config(
 # SESSION STATE
 # ============================================================
 
-for key in [
-    "history",
-    "result",
-    "generated_code",
-    "ai_response",
-    "command_input"
-]:
-    if key not in st.session_state:
-        st.session_state[key] = [] if key == "history" else None
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+if "result" not in st.session_state:
+    st.session_state.result = None
+
+if "generated_code" not in st.session_state:
+    st.session_state.generated_code = None
+
+if "ai_response" not in st.session_state:
+    st.session_state.ai_response = None
+
+if "command_input" not in st.session_state:
+    st.session_state.command_input = ""
+
+if "voice_command" not in st.session_state:
+    st.session_state.voice_command = ""
+
+if "last_command" not in st.session_state:
+    st.session_state.last_command = ""
 
 
 # ============================================================
@@ -233,132 +56,253 @@ st.markdown(
     """
     <style>
 
-    /* ========================================================
-       MAIN APP
-    ======================================================== */
+    /* =========================================================
+       SHEETPILOT AI - CLEAN LIGHT THEME
+       ========================================================= */
 
+    /* ---------- APP ---------- */
+
+    [data-testid="stAppViewContainer"],
+    [data-testid="stMain"],
     .stApp {
-        background-color: #f6f8fb;
-        color: #111827;
+        background: #f5f7fb !important;
     }
 
     .block-container {
-        max-width: 1450px;
-        padding-top: 2rem;
-        padding-bottom: 3rem;
+        max-width: 1450px !important;
+        padding-top: 2rem !important;
+        padding-bottom: 4rem !important;
     }
 
 
-    /* ========================================================
-       MAIN CONTENT TEXT
-    ======================================================== */
+    /* ---------- MAIN HEADINGS ---------- */
 
-    .main .block-container {
+    [data-testid="stMain"] h1,
+    [data-testid="stMain"] h2,
+    [data-testid="stMain"] h3,
+    [data-testid="stMain"] h4 {
+        color: #111827 !important;
+        opacity: 1 !important;
+    }
+
+    [data-testid="stMain"] h1 {
+        font-size: 2.25rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.7px !important;
+    }
+
+    [data-testid="stMain"] h2 {
+        font-weight: 750 !important;
+    }
+
+    [data-testid="stMain"] h3 {
+        font-weight: 700 !important;
+    }
+
+    [data-testid="stMain"] p {
+        color: #334155;
+    }
+
+    [data-testid="stMain"] [data-testid="stMarkdownContainer"] {
         color: #111827;
     }
 
-    .main .block-container h1,
-    .main .block-container h2,
-    .main .block-container h3,
-    .main .block-container h4 {
+    [data-testid="stMain"]
+    [data-testid="stMarkdownContainer"] h1,
+    [data-testid="stMain"]
+    [data-testid="stMarkdownContainer"] h2,
+    [data-testid="stMain"]
+    [data-testid="stMarkdownContainer"] h3,
+    [data-testid="stMain"]
+    [data-testid="stMarkdownContainer"] h4 {
         color: #111827 !important;
     }
 
-    .main .block-container p {
-        color: #475569;
-    }
-
-    .main .block-container label {
-        color: #334155 !important;
-    }
-
-
-    /* ========================================================
-       TITLE
-    ======================================================== */
-
-    .main .block-container h1 {
-        font-weight: 800;
-        letter-spacing: -0.5px;
-    }
-
-    .main .block-container h2 {
-        font-weight: 750;
-    }
-
-    .main .block-container h3 {
-        font-weight: 700;
-    }
-
-
-    /* ========================================================
-       CAPTIONS
-    ======================================================== */
-
-    .main .block-container [data-testid="stCaptionContainer"] {
+    [data-testid="stCaptionContainer"] {
         color: #64748b !important;
     }
 
+    [data-testid="stCaptionContainer"] p {
+        color: #64748b !important;
+    }
 
-    /* ========================================================
-       DIVIDERS
-    ======================================================== */
-
-    .main .block-container hr {
-        border-color: #e2e8f0;
+    [data-testid="stMain"] hr {
+        border-color: #dfe5ee !important;
     }
 
 
-    /* ========================================================
-       BUTTONS
-    ======================================================== */
+    /* ---------- SIDEBAR ---------- */
 
-    .stButton > button {
-        border-radius: 10px;
-        font-weight: 600;
-        min-height: 42px;
+    section[data-testid="stSidebar"] {
+        background: #171923 !important;
+        border-right: 1px solid #252936 !important;
     }
 
-    .stButton > button:hover {
-        transform: translateY(-1px);
-    }
-
-
-    /* ========================================================
-       PRIMARY BUTTON
-    ======================================================== */
-
-    .stButton > button[kind="primary"] {
-        font-weight: 700;
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] h4,
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] span {
+        color: #f8fafc !important;
     }
 
 
-    /* ========================================================
-       FILE UPLOADER
-    ======================================================== */
+    /* ---------- INFO / WARNING / SUCCESS ---------- */
+
+    [data-testid="stAlert"] {
+        border-radius: 12px !important;
+    }
+
+    [data-testid="stAlert"] p,
+    [data-testid="stAlert"] span {
+        color: #1e293b !important;
+    }
+
+
+    /* ---------- FILE UPLOADER ---------- */
 
     [data-testid="stFileUploader"] {
-        background-color: #ffffff;
-        border-radius: 14px;
-        padding: 10px;
-        border: 1px solid #dbe2ea;
+        background: #ffffff !important;
+        border: 1px solid #dfe5ee !important;
+        border-radius: 14px !important;
+        padding: 12px !important;
     }
 
-    [data-testid="stFileUploader"] label {
+    [data-testid="stFileUploader"] label,
+    [data-testid="stFileUploader"] label p {
+        color: #111827 !important;
+    }
+
+    [data-testid="stFileUploaderDropzone"] {
+        background: #ffffff !important;
+        border: 1px dashed #cbd5e1 !important;
+        border-radius: 10px !important;
+    }
+
+
+    /* ---------- TEXT AREA ---------- */
+
+    [data-testid="stTextArea"] label,
+    [data-testid="stTextArea"] label p {
+        color: #111827 !important;
+        font-weight: 600 !important;
+    }
+
+    [data-testid="stTextArea"] textarea {
+        background: #ffffff !important;
+        color: #111827 !important;
+        -webkit-text-fill-color: #111827 !important;
+        caret-color: #111827 !important;
+
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 12px !important;
+
+        min-height: 105px !important;
+        padding: 14px 16px !important;
+
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+    }
+
+    [data-testid="stTextArea"] textarea:focus {
+        border: 2px solid #93c5fd !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+        outline: none !important;
+    }
+
+    [data-testid="stTextArea"] textarea::placeholder {
+        color: #64748b !important;
+        -webkit-text-fill-color: #64748b !important;
+        opacity: 1 !important;
+    }
+
+
+    /* ---------- CHECKBOX ---------- */
+
+    [data-testid="stCheckbox"] label,
+    [data-testid="stCheckbox"] label p {
         color: #334155 !important;
     }
 
 
-    /* ========================================================
-       METRICS
-    ======================================================== */
+    /* ---------- NORMAL INPUTS ---------- */
+
+    [data-testid="stTextInput"] input,
+    [data-testid="stNumberInput"] input,
+    [data-testid="stDateInput"] input {
+        background: #ffffff !important;
+        color: #111827 !important;
+        -webkit-text-fill-color: #111827 !important;
+    }
+
+
+    /* ---------- BUTTONS ---------- */
+
+    [data-testid="stButton"] button {
+        min-height: 42px !important;
+        border-radius: 10px !important;
+        font-weight: 650 !important;
+        transition: 0.15s ease !important;
+    }
+
+
+    /* ---------- SECONDARY BUTTON ---------- */
+
+    [data-testid="stButton"] button[kind="secondary"],
+    [data-testid="stBaseButton-secondary"] {
+        background: #ffffff !important;
+        color: #111827 !important;
+        -webkit-text-fill-color: #111827 !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+    }
+
+    [data-testid="stButton"] button[kind="secondary"]:hover,
+    [data-testid="stBaseButton-secondary"]:hover {
+        background: #f8fafc !important;
+        color: #111827 !important;
+        border-color: #94a3b8 !important;
+    }
+
+
+    /* ---------- PRIMARY BUTTON ---------- */
+
+    [data-testid="stButton"] button[kind="primary"],
+    [data-testid="stBaseButton-primary"] {
+        background: #ef2b24 !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        border: 1px solid #ef2b24 !important;
+        font-weight: 750 !important;
+        box-shadow: 0 4px 10px rgba(239, 43, 36, 0.18) !important;
+    }
+
+    [data-testid="stButton"] button[kind="primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover {
+        background: #d91f19 !important;
+        color: #ffffff !important;
+        border-color: #d91f19 !important;
+    }
+
+    [data-testid="stButton"] button p,
+    [data-testid="stButton"] button span {
+        color: inherit !important;
+        -webkit-text-fill-color: inherit !important;
+    }
+
+
+    /* ---------- METRIC CARDS ---------- */
 
     [data-testid="stMetric"] {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 15px;
-        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 14px !important;
+        padding: 16px !important;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05) !important;
     }
 
     [data-testid="stMetricLabel"] {
@@ -374,110 +318,96 @@ st.markdown(
     }
 
 
-    /* ========================================================
-       EXPANDERS
-    ======================================================== */
+    /* ---------- EXPANDERS ---------- */
 
     [data-testid="stExpander"] {
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        background-color: #ffffff;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
     }
 
-    [data-testid="stExpander"] summary {
+    [data-testid="stExpander"] summary,
+    [data-testid="stExpander"] summary span {
         color: #111827 !important;
-        font-weight: 600;
+        font-weight: 650 !important;
     }
 
 
-    /* ========================================================
-       INFO / WARNING / SUCCESS BOXES
-    ======================================================== */
-
-    [data-testid="stAlert"] {
-        border-radius: 12px;
-    }
-
-
-    /* ========================================================
-       DATAFRAME
-    ======================================================== */
+    /* ---------- DATAFRAME ---------- */
 
     [data-testid="stDataFrame"] {
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
     }
 
 
-    /* ========================================================
-       TEXT INPUTS
-    ======================================================== */
+    /* ---------- CODE ---------- */
 
-    textarea,
-    input {
+    [data-testid="stCodeBlock"] {
+        border-radius: 12px !important;
+    }
+
+
+    /* ---------- DOWNLOAD ---------- */
+
+    [data-testid="stDownloadButton"] button {
+        background: #ffffff !important;
         color: #111827 !important;
+        -webkit-text-fill-color: #111827 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 10px !important;
+        font-weight: 650 !important;
+    }
+
+    [data-testid="stDownloadButton"] button:hover {
+        background: #f8fafc !important;
+        border-color: #94a3b8 !important;
     }
 
 
-    /* ========================================================
-       WORKFLOW
-    ======================================================== */
+    /* ---------- WORKFLOW ---------- */
 
     .workflow-icon {
         font-size: 30px;
         text-align: center;
-        margin-bottom: 4px;
+        margin-bottom: 5px;
     }
 
     .workflow-label {
         color: #475569 !important;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 650;
         text-align: center;
     }
 
 
-    /* ========================================================
-       SIDEBAR
-    ======================================================== */
-
-    section[data-testid="stSidebar"] {
-        background-color: #171923;
-    }
-
-
-    /* ========================================================
-       SIDEBAR TEXT
-    ======================================================== */
-
-    section[data-testid="stSidebar"] h1,
-    section[data-testid="stSidebar"] h2,
-    section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] p,
-    section[data-testid="stSidebar"] label {
-        color: #f8fafc !important;
-    }
-
-
-    /* ========================================================
-       MOBILE
-    ======================================================== */
+    /* ---------- MOBILE ---------- */
 
     @media (max-width: 768px) {
 
         .block-container {
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            padding-top: 1rem !important;
+        }
+
+        [data-testid="stMain"] h1 {
+            font-size: 1.8rem !important;
         }
 
         .workflow-icon {
-            font-size: 25px;
+            font-size: 24px;
         }
 
         .workflow-label {
-            font-size: 11px;
+            font-size: 10px;
         }
 
+        [data-testid="stTextArea"] textarea {
+            min-height: 90px !important;
+        }
     }
 
     </style>
@@ -504,7 +434,7 @@ st.subheader(
 )
 
 st.caption(
-    "Upload → Speak / Type → Generate → Execute → Download"
+    "Upload → Speak / Type → AI Analysis → Generate → Execute → Export"
 )
 
 st.divider()
@@ -518,65 +448,28 @@ st.markdown("### 🔄 How SheetPilot Works")
 
 workflow = st.columns(6)
 
-with workflow[0]:
-    st.markdown(
-        '<div class="workflow-icon">📁</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        '<div class="workflow-label">Upload</div>',
-        unsafe_allow_html=True
-    )
+workflow_steps = [
+    ("📁", "Upload"),
+    ("🎤", "Speak / Type"),
+    ("🧠", "AI Analysis"),
+    ("⚙️", "Generate"),
+    ("▶️", "Execute"),
+    ("📥", "Export")
+]
 
-with workflow[1]:
-    st.markdown(
-        '<div class="workflow-icon">🎤</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        '<div class="workflow-label">Speak / Type</div>',
-        unsafe_allow_html=True
-    )
+for col, (icon, label) in zip(workflow, workflow_steps):
 
-with workflow[2]:
-    st.markdown(
-        '<div class="workflow-icon">🧠</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        '<div class="workflow-label">AI Analysis</div>',
-        unsafe_allow_html=True
-    )
+    with col:
 
-with workflow[3]:
-    st.markdown(
-        '<div class="workflow-icon">⚙️</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        '<div class="workflow-label">Generate</div>',
-        unsafe_allow_html=True
-    )
+        st.markdown(
+            f'<div class="workflow-icon">{icon}</div>',
+            unsafe_allow_html=True
+        )
 
-with workflow[4]:
-    st.markdown(
-        '<div class="workflow-icon">▶️</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        '<div class="workflow-label">Execute</div>',
-        unsafe_allow_html=True
-    )
-
-with workflow[5]:
-    st.markdown(
-        '<div class="workflow-icon">📥</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        '<div class="workflow-label">Export</div>',
-        unsafe_allow_html=True
-    )
+        st.markdown(
+            f'<div class="workflow-label">{label}</div>',
+            unsafe_allow_html=True
+        )
 
 st.divider()
 
@@ -626,6 +519,8 @@ except Exception as e:
     st.stop()
 
 
+# Store dataframe
+
 st.session_state["df"] = df
 
 
@@ -635,7 +530,15 @@ st.session_state["df"] = df
 
 st.markdown("## 📈 Dataset Overview")
 
-render_metrics(df)
+try:
+
+    render_metrics(df)
+
+except Exception as e:
+
+    st.warning(
+        f"Unable to render dataset metrics: {e}"
+    )
 
 
 with st.expander(
@@ -674,39 +577,54 @@ if submitted:
     if not command or not command.strip():
 
         st.warning(
-            "Please enter or speak a command."
+            "⚠️ Please enter or speak a command."
         )
 
-        st.stop()
+    else:
 
+        # Save command for history
+        st.session_state.last_command = command
 
-    with st.spinner(
-        "🧠 SheetPilot is understanding your request..."
-    ):
+        with st.spinner(
+            "🧠 SheetPilot is understanding your request..."
+        ):
 
-        try:
+            try:
 
-            gemini = GeminiService()
+                gemini = GeminiService()
 
-            ai_response = gemini.generate_command(
-                command,
-                df,
-                prefer_vba=prefer_vba
-            )
+                ai_response = gemini.generate_command(
+                    command,
+                    df,
+                    prefer_vba=prefer_vba
+                )
 
-            st.session_state.ai_response = ai_response
+                # Validate AI response
 
-            st.session_state.generated_code = (
-                ai_response.get("code")
-            )
+                if not isinstance(ai_response, dict):
 
-        except Exception as e:
+                    raise ValueError(
+                        "Gemini returned an invalid response."
+                    )
 
-            st.error(
-                f"Gemini error: {e}"
-            )
+                st.session_state.ai_response = ai_response
 
-            st.stop()
+                st.session_state.generated_code = (
+                    ai_response.get("code")
+                )
+
+                # Clear previous execution result
+                st.session_state.result = None
+
+                st.success(
+                    "✅ AI command generated successfully!"
+                )
+
+            except Exception as e:
+
+                st.error(
+                    f"❌ Gemini error: {e}"
+                )
 
 
 # ============================================================
@@ -721,7 +639,6 @@ if st.session_state.ai_response:
 
     col1, col2, col3 = st.columns(3)
 
-
     with col1:
 
         st.metric(
@@ -731,7 +648,6 @@ if st.session_state.ai_response:
                 "N/A"
             )
         )
-
 
     with col2:
 
@@ -743,7 +659,6 @@ if st.session_state.ai_response:
             )
         )
 
-
     with col3:
 
         st.metric(
@@ -754,6 +669,9 @@ if st.session_state.ai_response:
             ).upper()
         )
 
+    # --------------------------------------------------------
+    # AI EXPLANATION
+    # --------------------------------------------------------
 
     if show_ai:
 
@@ -777,35 +695,31 @@ if st.session_state.ai_response:
 if (
     show_code
     and st.session_state.generated_code
+    and st.session_state.ai_response
 ):
 
     code_type = (
-        st.session_state.ai_response
-        .get(
+        st.session_state.ai_response.get(
             "code_type",
             "pandas"
         )
     )
 
-
     lang = (
         "vb"
-        if code_type == "vba"
+        if code_type.lower() == "vba"
         else "python"
     )
 
-
     code_title = (
         "VBA Macro"
-        if code_type == "vba"
+        if code_type.lower() == "vba"
         else "Pandas"
     )
-
 
     st.markdown(
         f"## 💻 Generated {code_title} Code"
     )
-
 
     with st.expander(
         "View Generated Code",
@@ -817,11 +731,10 @@ if (
             language=lang
         )
 
-
-        if code_type == "vba":
+        if code_type.lower() == "vba":
 
             st.success(
-                "Copy the VBA code above and paste it "
+                "📋 Copy the VBA code above and paste it "
                 "into the Excel VBA Editor using Alt+F11."
             )
 
@@ -830,27 +743,30 @@ if (
 # EXECUTION
 # ============================================================
 
-if st.session_state.generated_code:
+if (
+    st.session_state.generated_code
+    and st.session_state.ai_response
+):
 
     code_type = (
-        st.session_state.ai_response
-        .get(
+        st.session_state.ai_response.get(
             "code_type",
             "pandas"
         )
     )
 
-
     st.markdown("## ⚙️ Execute")
 
+    # ========================================================
+    # PANDAS EXECUTION
+    # ========================================================
 
-    if code_type == "pandas":
+    if code_type.lower() == "pandas":
 
         st.info(
             "The generated Pandas code is ready. "
             "Review it above before execution."
         )
-
 
         if st.button(
             "▶️ Execute Generated Code",
@@ -869,34 +785,46 @@ if st.session_state.generated_code:
                         df
                     )
 
+                # Validate result
 
-                    st.session_state.result = result
+                if result is None:
 
-
-                    st.session_state.history.append(
-                        {
-                            "command": command,
-                            "status": "Success"
-                        }
+                    raise ValueError(
+                        "Generated code did not return a result."
                     )
 
+                st.session_state.result = result
+
+                # Add to history
+
+                st.session_state.history.append(
+                    {
+                        "command": (
+                            st.session_state.last_command
+                            or st.session_state.command_input
+                        ),
+                        "status": "Success"
+                    }
+                )
 
                 st.success(
                     "✅ Operation completed successfully!"
                 )
 
-
             except Exception as e:
 
                 st.error(
-                    f"Execution failed: {e}"
+                    f"❌ Execution failed: {e}"
                 )
 
+    # ========================================================
+    # VBA
+    # ========================================================
 
     else:
 
         st.warning(
-            "VBA macros cannot be executed inside "
+            "⚠️ VBA macros cannot be executed inside "
             "the browser. Copy the generated code "
             "into Excel."
         )
@@ -912,16 +840,15 @@ if st.session_state.result is not None:
 
     st.markdown("## 📊 Execution Result")
 
+    # ========================================================
+    # DATAFRAME RESULT
+    # ========================================================
 
-    if isinstance(
-        result,
-        pd.DataFrame
-    ):
+    if isinstance(result, pd.DataFrame):
 
         st.success(
             "✅ Operation completed successfully."
         )
-
 
         st.dataframe(
             result,
@@ -929,57 +856,63 @@ if st.session_state.result is not None:
             height=450
         )
 
-
         # ====================================================
         # DOWNLOAD
         # ====================================================
 
-        st.markdown(
-            "### 📥 Export Result"
-        )
+        st.markdown("### 📥 Export Result")
 
-
-        csv = result.to_csv(
+        csv_data = result.to_csv(
             index=False
         )
 
-
         st.download_button(
             label="📥 Download Result as CSV",
-            data=csv,
+            data=csv_data,
             file_name="sheetpilot_result.csv",
-            mime="text/csv"
+            mime="text/csv",
+            use_container_width=False
         )
-
 
         # ====================================================
         # VISUALIZATION
         # ====================================================
 
-        chart_type = (
-            st.session_state.ai_response
-            .get("chart_type")
-        )
+        if st.session_state.ai_response:
 
-
-        fig = create_visualization(
-            result,
-            chart_type
-        )
-
-
-        if fig:
-
-            st.markdown(
-                "### 📈 Visualization"
+            chart_type = (
+                st.session_state.ai_response.get(
+                    "chart_type"
+                )
             )
 
+            try:
 
-            st.plotly_chart(
-                fig,
-                use_container_width=True
-            )
+                fig = create_visualization(
+                    result,
+                    chart_type
+                )
 
+                if fig:
+
+                    st.markdown(
+                        "### 📈 Visualization"
+                    )
+
+                    st.plotly_chart(
+                        fig,
+                        use_container_width=True
+                    )
+
+            except Exception as e:
+
+                st.warning(
+                    f"Unable to create visualization: {e}"
+                )
+
+    # ========================================================
+    # OTHER RESULT TYPES
+    # ========================================================
 
     else:
 
@@ -996,7 +929,6 @@ if st.session_state.history:
         "## 🕘 Command History"
     )
 
-
     with st.expander(
         "View Previous Commands",
         expanded=False
@@ -1007,11 +939,11 @@ if st.session_state.history:
         ):
 
             st.write(
-                f"🎤 **{item['command']}**"
+                f"🎤 **{item.get('command', 'Unknown command')}**"
             )
 
             st.caption(
-                f"Status: {item['status']}"
+                f"Status: {item.get('status', 'Unknown')}"
             )
 
             st.divider()
