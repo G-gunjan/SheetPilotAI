@@ -6,4 +6,3 @@ google-genai
 python-dotenv
 openpyxl
 SpeechRecognition
-pyaudio
