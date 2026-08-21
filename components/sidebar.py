@@ -1,36 +1,3 @@
-# import streamlit as st
-
-
-# def render_sidebar():
-
-#     with st.sidebar:
-
-#         st.title("⚙️ SheetPilot")
-
-#         st.markdown("---")
-
-#         st.subheader("Settings")
-
-#         show_code = st.checkbox(
-#             "Show generated code",
-#             value=True
-#         )
-
-#         show_ai = st.checkbox(
-#             "Show AI explanation",
-#             value=True
-#         )
-
-#         st.markdown("---")
-
-#         st.caption(
-#             "AI-powered spreadsheet automation"
-#         )
-
-#     return show_code, show_ai
-
-
-
 import streamlit as st
 
 def render_sidebar():

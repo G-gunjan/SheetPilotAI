@@ -9,10 +9,7 @@ from services.gemini_service import GeminiService
 from services.code_executor import execute_code
 from utils.visualisation import create_visualization
 
-
-# ============================================================
 # PAGE CONFIG
-# ============================================================
 
 st.set_page_config(
     page_title="SheetPilot AI",
@@ -22,9 +19,7 @@ st.set_page_config(
 )
 
 
-# ============================================================
 # SESSION STATE
-# ============================================================
 
 if "history" not in st.session_state:
     st.session_state.history = []
@@ -48,19 +43,11 @@ if "last_command" not in st.session_state:
     st.session_state.last_command = ""
 
 
-# ============================================================
 # CUSTOM STREAMLIT STYLING
-# ============================================================
 
 st.markdown(
     """
     <style>
-
-    /* =========================================================
-       SHEETPILOT AI - CLEAN LIGHT THEME
-       ========================================================= */
-
-    /* ---------- APP ---------- */
 
     [data-testid="stAppViewContainer"],
     [data-testid="stMain"],
@@ -74,8 +61,6 @@ st.markdown(
         padding-bottom: 4rem !important;
     }
 
-
-    /* ---------- MAIN HEADINGS ---------- */
 
     [data-testid="stMain"] h1,
     [data-testid="stMain"] h2,
@@ -131,7 +116,6 @@ st.markdown(
     }
 
 
-    /* ---------- SIDEBAR ---------- */
 
     section[data-testid="stSidebar"] {
         background: #171923 !important;
@@ -149,7 +133,6 @@ st.markdown(
     }
 
 
-    /* ---------- INFO / WARNING / SUCCESS ---------- */
 
     [data-testid="stAlert"] {
         border-radius: 12px !important;
@@ -161,7 +144,6 @@ st.markdown(
     }
 
 
-    /* ---------- FILE UPLOADER ---------- */
 
     [data-testid="stFileUploader"] {
         background: #ffffff !important;
@@ -182,7 +164,6 @@ st.markdown(
     }
 
 
-    /* ---------- TEXT AREA ---------- */
 
     [data-testid="stTextArea"] label,
     [data-testid="stTextArea"] label p {
@@ -221,7 +202,6 @@ st.markdown(
     }
 
 
-    /* ---------- CHECKBOX ---------- */
 
     [data-testid="stCheckbox"] label,
     [data-testid="stCheckbox"] label p {
@@ -229,7 +209,6 @@ st.markdown(
     }
 
 
-    /* ---------- NORMAL INPUTS ---------- */
 
     [data-testid="stTextInput"] input,
     [data-testid="stNumberInput"] input,
@@ -240,7 +219,6 @@ st.markdown(
     }
 
 
-    /* ---------- BUTTONS ---------- */
 
     [data-testid="stButton"] button {
         min-height: 42px !important;
@@ -250,7 +228,6 @@ st.markdown(
     }
 
 
-    /* ---------- SECONDARY BUTTON ---------- */
 
     [data-testid="stButton"] button[kind="secondary"],
     [data-testid="stBaseButton-secondary"] {
@@ -269,7 +246,6 @@ st.markdown(
     }
 
 
-    /* ---------- PRIMARY BUTTON ---------- */
 
     [data-testid="stButton"] button[kind="primary"],
     [data-testid="stBaseButton-primary"] {
@@ -295,7 +271,6 @@ st.markdown(
     }
 
 
-    /* ---------- METRIC CARDS ---------- */
 
     [data-testid="stMetric"] {
         background: #ffffff !important;
@@ -333,7 +308,6 @@ st.markdown(
     }
 
 
-    /* ---------- DATAFRAME ---------- */
 
     [data-testid="stDataFrame"] {
         background: #ffffff !important;
@@ -343,14 +317,12 @@ st.markdown(
     }
 
 
-    /* ---------- CODE ---------- */
 
     [data-testid="stCodeBlock"] {
         border-radius: 12px !important;
     }
 
 
-    /* ---------- DOWNLOAD ---------- */
 
     [data-testid="stDownloadButton"] button {
         background: #ffffff !important;
@@ -367,7 +339,6 @@ st.markdown(
     }
 
 
-    /* ---------- WORKFLOW ---------- */
 
     .workflow-icon {
         font-size: 30px;
@@ -383,7 +354,6 @@ st.markdown(
     }
 
 
-    /* ---------- MOBILE ---------- */
 
     @media (max-width: 768px) {
 
@@ -416,16 +386,12 @@ st.markdown(
 )
 
 
-# ============================================================
-# SIDEBAR
-# ============================================================
+
 
 show_code, show_ai = render_sidebar()
 
 
-# ============================================================
-# HEADER
-# ============================================================
+
 
 st.title("📊 SheetPilot AI")
 
@@ -439,10 +405,6 @@ st.caption(
 
 st.divider()
 
-
-# ============================================================
-# WORKFLOW
-# ============================================================
 
 st.markdown("### 🔄 How SheetPilot Works")
 
@@ -474,9 +436,7 @@ for col, (icon, label) in zip(workflow, workflow_steps):
 st.divider()
 
 
-# ============================================================
-# FILE UPLOAD
-# ============================================================
+
 
 st.markdown("## 📁 Upload Your Dataset")
 
@@ -502,10 +462,6 @@ if uploaded_file is None:
     st.stop()
 
 
-# ============================================================
-# LOAD DATA
-# ============================================================
-
 try:
 
     df = load_dataframe(uploaded_file)
@@ -523,10 +479,6 @@ except Exception as e:
 
 st.session_state["df"] = df
 
-
-# ============================================================
-# DATASET OVERVIEW
-# ============================================================
 
 st.markdown("## 📈 Dataset Overview")
 
@@ -553,9 +505,6 @@ with st.expander(
     )
 
 
-# ============================================================
-# COMMAND PANEL
-# ============================================================
 
 st.markdown("## 🎤 Tell SheetPilot What To Do")
 
@@ -567,10 +516,6 @@ st.info(
 
 command, submitted, prefer_vba = render_command_panel()
 
-
-# ============================================================
-# PROCESS COMMAND
-# ============================================================
 
 if submitted:
 
@@ -627,10 +572,6 @@ if submitted:
                 )
 
 
-# ============================================================
-# AI EXECUTION PLAN
-# ============================================================
-
 if st.session_state.ai_response:
 
     response = st.session_state.ai_response
@@ -669,9 +610,6 @@ if st.session_state.ai_response:
             ).upper()
         )
 
-    # --------------------------------------------------------
-    # AI EXPLANATION
-    # --------------------------------------------------------
 
     if show_ai:
 
@@ -687,10 +625,6 @@ if st.session_state.ai_response:
                 )
             )
 
-
-# ============================================================
-# GENERATED CODE
-# ============================================================
 
 if (
     show_code
@@ -739,10 +673,6 @@ if (
             )
 
 
-# ============================================================
-# EXECUTION
-# ============================================================
-
 if (
     st.session_state.generated_code
     and st.session_state.ai_response
@@ -757,9 +687,6 @@ if (
 
     st.markdown("## ⚙️ Execute")
 
-    # ========================================================
-    # PANDAS EXECUTION
-    # ========================================================
 
     if code_type.lower() == "pandas":
 
@@ -817,10 +744,6 @@ if (
                     f"❌ Execution failed: {e}"
                 )
 
-    # ========================================================
-    # VBA
-    # ========================================================
-
     else:
 
         st.warning(
@@ -830,9 +753,6 @@ if (
         )
 
 
-# ============================================================
-# RESULTS
-# ============================================================
 
 if st.session_state.result is not None:
 
@@ -840,9 +760,7 @@ if st.session_state.result is not None:
 
     st.markdown("## 📊 Execution Result")
 
-    # ========================================================
-    # DATAFRAME RESULT
-    # ========================================================
+ 
 
     if isinstance(result, pd.DataFrame):
 
@@ -856,9 +774,7 @@ if st.session_state.result is not None:
             height=450
         )
 
-        # ====================================================
-        # DOWNLOAD
-        # ====================================================
+    
 
         st.markdown("### 📥 Export Result")
 
@@ -874,9 +790,6 @@ if st.session_state.result is not None:
             use_container_width=False
         )
 
-        # ====================================================
-        # VISUALIZATION
-        # ====================================================
 
         if st.session_state.ai_response:
 
@@ -910,18 +823,12 @@ if st.session_state.result is not None:
                     f"Unable to create visualization: {e}"
                 )
 
-    # ========================================================
-    # OTHER RESULT TYPES
-    # ========================================================
 
     else:
 
         st.write(result)
 
 
-# ============================================================
-# HISTORY
-# ============================================================
 
 if st.session_state.history:
 
