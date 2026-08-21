@@ -9,7 +9,6 @@ from services.gemini_service import GeminiService
 from services.code_executor import execute_code
 from utils.visualisation import create_visualization
 
-# PAGE CONFIG
 
 st.set_page_config(
     page_title="SheetPilot AI",
@@ -19,7 +18,6 @@ st.set_page_config(
 )
 
 
-# SESSION STATE
 
 if "history" not in st.session_state:
     st.session_state.history = []
@@ -42,8 +40,6 @@ if "voice_command" not in st.session_state:
 if "last_command" not in st.session_state:
     st.session_state.last_command = ""
 
-
-# CUSTOM STREAMLIT STYLING
 
 st.markdown(
     """
@@ -473,9 +469,6 @@ except Exception as e:
     )
 
     st.stop()
-
-
-# Store dataframe
 
 st.session_state["df"] = df
 
